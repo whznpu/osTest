@@ -9,7 +9,7 @@ int main()
         return -1;
     }
     int i = 0;
-    while (i < 26)
+    while (i < 200)
     {
         addr[i] = 'A';
         i++;

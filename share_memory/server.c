@@ -4,7 +4,7 @@ int main()
     int shmid = createShm(4096);                // 创建共享内存
     char *addr = (char *)shmat(shmid, NULL, 0); // 将共享内存进行挂接
     int i = 0;
-    while (i++ < 26)
+    while (i++ < 200)
     {
         printf("client：%s\n", addr);
         sleep(1);
