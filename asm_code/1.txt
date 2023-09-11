@@ -1,0 +1,59 @@
+
+inline_test.o:     file format elf64-x86-64
+
+Sections:
+Idx Name          Size      VMA               LMA               File off  Algn
+  0 .text         00000056  0000000000000000  0000000000000000  00000040  2**0
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  1 .data         00000000  0000000000000000  0000000000000000  00000096  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000000  0000000000000000  0000000000000000  00000096  2**0
+                  ALLOC
+  3 .comment      0000002c  0000000000000000  0000000000000000  00000096  2**0
+                  CONTENTS, READONLY
+  4 .note.GNU-stack 00000000  0000000000000000  0000000000000000  000000c2  2**0
+                  CONTENTS, READONLY
+  5 .note.gnu.property 00000020  0000000000000000  0000000000000000  000000c8  2**3
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  6 .eh_frame     00000058  0000000000000000  0000000000000000  000000e8  2**3
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
+SYMBOL TABLE:
+0000000000000000 l    df *ABS*	0000000000000000 inline_test.c
+0000000000000000 l    d  .text	0000000000000000 .text
+0000000000000000 g     F .text	0000000000000018 add
+0000000000000018 g     F .text	000000000000003e main
+
+
+
+Disassembly of section .text:
+
+0000000000000000 <add>:
+   0:	f3 0f 1e fa          	endbr64 
+   4:	55                   	push   %rbp
+   5:	48 89 e5             	mov    %rsp,%rbp
+   8:	89 7d fc             	mov    %edi,-0x4(%rbp)
+   b:	89 75 f8             	mov    %esi,-0x8(%rbp)
+   e:	8b 55 fc             	mov    -0x4(%rbp),%edx
+  11:	8b 45 f8             	mov    -0x8(%rbp),%eax
+  14:	01 d0                	add    %edx,%eax
+  16:	5d                   	pop    %rbp
+  17:	c3                   	ret    
+
+0000000000000018 <main>:
+  18:	f3 0f 1e fa          	endbr64 
+  1c:	55                   	push   %rbp
+  1d:	48 89 e5             	mov    %rsp,%rbp
+  20:	48 83 ec 10          	sub    $0x10,%rsp
+  24:	be 02 00 00 00       	mov    $0x2,%esi
+  29:	bf 01 00 00 00       	mov    $0x1,%edi
+  2e:	e8 00 00 00 00       	call   33 <main+0x1b>
+  33:	89 45 f0             	mov    %eax,-0x10(%rbp)
+  36:	c7 45 f8 02 00 00 00 	movl   $0x2,-0x8(%rbp)
+  3d:	c7 45 fc 03 00 00 00 	movl   $0x3,-0x4(%rbp)
+  44:	8b 55 f8             	mov    -0x8(%rbp),%edx
+  47:	8b 45 fc             	mov    -0x4(%rbp),%eax
+  4a:	01 d0                	add    %edx,%eax
+  4c:	89 45 f4             	mov    %eax,-0xc(%rbp)
+  4f:	b8 00 00 00 00       	mov    $0x0,%eax
+  54:	c9                   	leave  
+  55:	c3                   	ret    

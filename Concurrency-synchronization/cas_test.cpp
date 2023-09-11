@@ -14,6 +14,8 @@ using namespace std;
 // fecth add 操作
 // 还是很好奇锁到底是怎么一回事儿 可以看一下银杏书和ostep
 
+// log: 2023.9.15 在ubuntu22上无法成功
+
 
 
 
@@ -42,7 +44,7 @@ public:
     {
         node *const new_node = new node(data);
         new_node->next = head.load(); // head更新，这语句需要重来一遍
-        while (!head.compare_exchange_strong(new_node->next, new_node))
+        while (!head.compare_exchange_weak(new_node->next, new_node))
             ;
         stack_size.fetch_add(1);// 增加计数器
         std::ostringstream oss;
@@ -53,7 +55,7 @@ public:
     {
         node *old_head = head.load();
 
-        while (old_head && !head.compare_exchange_strong(old_head, old_head->next));
+        while (old_head && !head.compare_exchange_weak(old_head, old_head->next));
         if (old_head)
         {
             data = old_head->data;
@@ -84,7 +86,7 @@ public:
 };
 
 const int num_threads = 4;
-const int num_pushes = 10000;
+const int num_pushes = 2000;
 
 lock_free_stack<int> my_stack;
 
@@ -99,6 +101,7 @@ void pop_data(int thread_id) {
         int data;
         if (my_stack.pop(data, thread_id)) {
             // 在这里可以对弹出的数据进行处理
+            // std::cout<<"pop!"<<std::endl;
         }
     }
 }
@@ -113,10 +116,14 @@ int main() {
     for (int i = 0; i < num_threads; ++i) {
         threads.emplace_back(pop_data, i); // 传递线程编号
     }
-
+    // 统计线程数量
+    int count_threads=0;
     for (std::thread &t : threads) {
+        count_threads++;
         t.join();
     }
+
+    std::cout<<"Thread count= "<<count_threads<<std::endl;
 
     std::cout << "Remaining items in the stack: " << my_stack.size() << std::endl;
 
